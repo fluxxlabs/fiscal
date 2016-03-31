@@ -9,7 +9,8 @@ module Fiscal
 
       @type    = (options[:type])
       @date    = (options[:date] || Date.today).to_date
-      @country = (options[:country] || :nil).to_sym
+      @mm = options[:mm] || 1
+      @dd = options[:dd] || 1
 
       if options[:index]
         # user input
@@ -27,8 +28,6 @@ module Fiscal
 
     def validate
       # date validation is handled by active support
-      # country
-      raise(FiscalError, "`#{@country}` is not a recognized country") unless self.config()[@country]
       # index
       valid_indexes = (1..(12 / months_in(type)))
       raise(FiscalError, "`#{@index}` is not a valid index for `#{@type}`") unless valid_indexes.include?(@index)
@@ -71,7 +70,7 @@ module Fiscal
         date  = @date
         index = @index + 1
       end
-      self.class.new(date: date, country: @country, type: @type, index: index)
+      self.class.new(date: date, mm: @mm,  dd: @dd, type: @type, index: index)
     end
 
     def prev
@@ -82,7 +81,7 @@ module Fiscal
         date  = @date
         index = @index - 1
       end
-      self.class.new(date: date, country: @country, type: @type, index: index)
+      self.class.new(date: date, mm: @mm,  dd: @dd, type: @type, index: index)
     end
 
     def to_i
@@ -95,11 +94,11 @@ module Fiscal
 
   private
     def start_month
-      self.config()[@country][:mm]
+      @mm
     end
 
     def start_day
-      self.config()[@country][:dd]
+      @dd
     end
 
     def months_between(from, to)
