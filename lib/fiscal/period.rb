@@ -1,7 +1,6 @@
 module Fiscal
 
   class FiscalPeriod
-    include FiscalConfig
 
     class FiscalError < StandardError; end
 
